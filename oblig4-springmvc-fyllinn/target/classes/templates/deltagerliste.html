@@ -6,7 +6,8 @@
 	<title>Deltagerliste</title>
 </head>
 <body>
-    <p th:text="|Innlogget som: ${session.user.mobil} / ${session.user.fornavn} ${session.user.etternavn}|"></p>
+    <!-- TODO - Informasjon om hvem du er innlogget som -->
+
 	<h2>Deltagerliste</h2>
 	<table>
 		<tr>
@@ -15,16 +16,12 @@
 			<th align="left">Mobil</th>
 		</tr>
 
-		<tr th:each="d : ${deltagere}" th:style="${session.user eq d} ? 'background-color:#aaffaa;' : ''">
-				<td align="center" th:utext="${d.kjonnsymbol}"></td>
-				<td th:text="${d.fulltNavn}"></td>
-				<td th:text="${d.mobilFormatert}"></td>
-		</tr>
+        <!-- TODO - Tabellradene med påmeldte deltagere -->
 
 	</table>
 	<br>
-	<form action="utlogging" method="post">
-	   <button type="submit">Logg ut</button> 
-	</form>
+
+    <!-- TODO - Skjema med knapp for utlogging -->
+
 </body>
 </html>

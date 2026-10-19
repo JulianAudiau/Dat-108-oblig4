@@ -7,9 +7,13 @@ import no.hvl.dat108.oblig4.service.DeltagerDbService;
 import no.hvl.dat108.oblig4.service.LogginnService;
 import no.hvl.dat108.oblig4.service.PassordService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static no.hvl.dat108.oblig4.model.Feilmeldinger.UGYLDIG_BRUKERNAVN_PASSORD_MLD;
+import static no.hvl.dat108.oblig4.model.Feilmeldinger.UTLOGGET_MLD;
 
 @Controller
 public class InnUtloggingController {
@@ -17,39 +21,46 @@ public class InnUtloggingController {
 	/*
 	 * GET /innlogging - Viser innloggingsskjemaet vhja logginn-viewet.
 	 */
-    //TODO - Annoteringen for å ta i mot requesten
+    @GetMapping("innlogging")
 	public String henteSkjema() {
 
-        //TODO - Skriv innholdet i denne metoden.
-        return "";
+        return "logginn";
 	}
 
 	/*
-	 * POST /innlogging - Tar i mot forsøk på innlogging, dvs: 
+	 * POST /innlogging - Tar i mot forsøk på innlogging, dvs:
 	 * - Sjekker at deltager finnes og at passord er korrekt
 	 * - Logger inn og går (redirecter) til deltagerlisten
 	 *
 	 * Hvis ugyldig brukernavn og/eller passord, skal det gjøres er redirect
 	 * til /innlogging med en feilmelding satt som en flash-attributt.
 	 */
-    //TODO - Annoteringen for å ta i mot requesten
-	public String loggeInn(@RequestParam String mobil, @RequestParam String passord, 
+    @PostMapping("innlogging")
+	public String loggeInn(@RequestParam String mobil, @RequestParam String passord,
 			HttpServletRequest request, RedirectAttributes ra) {
+       Deltager deltager = DeltagerDbService.finnDeltagerMedMobil(mobil);
 
-        //TODO - Skriv innholdet i denne metoden.
-        return "";
+
+        if(deltager == null || !PassordService.erPassordKorrekt(passord, deltager.getHashetPassord())){
+            ra.addFlashAttribute("redirectMelding", UGYLDIG_BRUKERNAVN_PASSORD_MLD);
+            return "redirect:innlogging";
+        }
+        LogginnService.loggInnBruker(request,deltager);
+        return "redirect:deltagerliste";
 	}
 
 	/*
-	 * POST /utlogging - Tar i mot forespørsel om utlogging, dvs: 
-	 * - Logger ut 
+	 * POST /utlogging - Tar i mot forespørsel om utlogging, dvs:
+	 * - Logger ut
 	 * - Går (redirecter) til innlogging
 	 */
-    //TODO - Annoteringen for å ta i mot requesten
+   @PostMapping("utlogging")
 	public String loggeUt(HttpServletRequest request, RedirectAttributes ra) {
 
-        //TODO - Skriv innholdet i denne metoden.
-        return "";
+
+       LogginnService.loggUtBruker(request);
+       ra.addFlashAttribute("redirectMelding",  UTLOGGET_MLD);
+       return "redirect:innlogging";
 	}
 
 }
